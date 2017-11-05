@@ -38,7 +38,7 @@ int main() {
         }
     }
     
-    //Pad borders by zero and copy input matrix
+    //Pad borders with zero and copy input matrix to temp matrix
     for (int i=0; i<=N+1; i++) {
         for (int j=0; j<=N+1; j++) {
             if(i==0 || j==0 || i==N+1 || j==N+1)
@@ -47,9 +47,6 @@ int main() {
                 x[i][j]= input[i-1][j-1];
         }
     }
-    
- //   #pragma omp parallel
- //       printf("Hello from thread %d, nthreads %d\n", omp_get_thread_num(), omp_get_num_threads());
     
     int n=N;
     for(int i=0; i<LOOP_COUNT; i++)
@@ -60,28 +57,41 @@ int main() {
             {
                 for (int i=1; i < n; i++)
                 {
-                    int a= checkNeighbours(x,i,j);
-                    result[i][j]=a;
-                    
-                    //printf("%d-%d-result %d \n",i,j,a);
-                    //a[i][j] = a[i][j];
-                    //if (omp_get_thread_num() == 1)
-                    //    printf("%d-%d-%d \n",i,j,input[i][j]);
+                    int temp= checkNeighbours(x,i,j);
+                    result[i][j]=temp;
                 }
-                //printf("\n \n \n");
             }
-        //Copy output matrix to result matrix
+        //Copy output matrix for next iteration
         for (int i=0; i<N+2; i++) {
             for (int j=0; j<=N+2; j++) {
                 x[i][j] = result[i][j];
             }
         }
-        printMatrix2(x);
+        printMatrix2(result);
     }
-    
-    
 }
 
+//. Change the state of each element using its current state and the states of its 8 neighbours:
+//- if there are 5 or more 1s, change its state to alive
+//- otherwise change its state to dead
+int checkNeighbours(int matrix[N+2][N+2],int i,int j)
+{
+    int aliveCount = 0, deadCount = 0;
+    
+    matrix[i-1][j-1] == 0 ? deadCount++ : aliveCount++;
+    matrix[i-1][j] == 0 ? deadCount++ : aliveCount++;
+    matrix[i-1][j+1] == 0 ? deadCount++ : aliveCount++;
+    matrix[i][j-1] == 0 ? deadCount++ : aliveCount++;
+    matrix[i][j+1] == 0 ? deadCount++ : aliveCount++;
+    matrix[i+1][j-1] == 0 ? deadCount++ : aliveCount++;
+    matrix[i+1][j] == 0 ? deadCount++ : aliveCount++;
+    matrix[i+1][j+1] == 0 ? deadCount++ : aliveCount++;
+    
+    if(aliveCount>= 5)
+        return 1;
+    else
+        return 0;
+}
 
 void printMatrix (int matrix[N][N])
 {
@@ -103,27 +113,4 @@ void printMatrix2 (int matrix[N+2][N+2])
         printf ("\n");
     }
     printf ("\n");
-}
-
-//. Change the state of each element using its current state and the states of its 8 neighbours:
-//- if there are 5 or more 1s, change its state to alive
-//- otherwise change its state to dead
-int checkNeighbours(int matrix[N+2][N+2],int i,int j)
-{
-    int aliveCount = 0, deadCount = 0;
-    //Find neighbours
-    matrix[i-1][j-1] == 0 ? deadCount++ : aliveCount++;
-    matrix[i-1][j] == 0 ? deadCount++ : aliveCount++;
-    matrix[i-1][j+1] == 0 ? deadCount++ : aliveCount++;
-    matrix[i][j-1] == 0 ? deadCount++ : aliveCount++;
-    matrix[i][j+1] == 0 ? deadCount++ : aliveCount++;
-    matrix[i+1][j-1] == 0 ? deadCount++ : aliveCount++;
-    matrix[i+1][j] == 0 ? deadCount++ : aliveCount++;
-    matrix[i+1][j+1] == 0 ? deadCount++ : aliveCount++;
-    
-    if(aliveCount>= 5)
-        return 1;
-    else
-        return 0;
-    
 }

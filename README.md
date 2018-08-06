@@ -4,3 +4,11 @@
    * if there are 5 or more 1s, change its state to alive 
    * otherwise change its state to dead
 1. Repeat (2) at least 10 times and observe the changes in the matrix.
+
+# Compile and Run
+```console
+gcc-7 -fopenmp -o main main.c
+./main
+```
+
+This project was developed to be a parallel programming example with OpenMP.
